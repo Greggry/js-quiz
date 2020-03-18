@@ -1,9 +1,17 @@
+:root {
+  --bgColor: #FDFAFD;
+  --fontColor: #641AE5;
+  --secondaryFontColor: #9BE51A;
+}
+
 body {
-  background-color: lightgray;
+  background-color: var(--bgColor);
 }
 
 .app {
-  border: 1px solid black;
-  width: 70%;
-  margin: 0 auto;
+  border: 1px solid var(--secondaryFontColor);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
