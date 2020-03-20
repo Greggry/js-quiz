@@ -1,17 +1,78 @@
 :root {
   --bgColor: #FDFAFD;
+  --dimmerBgColor: #F7F7F7;
   --fontColor: #641AE5;
-  --secondaryFontColor: #9BE51A;
+  --auxiliaryColor1: #9BE51A;
+  --auxiliaryColor2: #E1341E;
+}
+
+* {
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background-color: var(--bgColor);
 }
 
-.app {
-  border: 1px solid var(--secondaryFontColor);
+.quiz {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-around;
+  border: 1px solid var(--auxiliaryColor1);
+  width: 15rem;
+  height: 17rem;
+  padding: 20px;
+  margin: 20px auto;
+}
+
+.title,
+.question {
+  text-align: center;
+}
+
+.answer-list {
+  list-style-type: lower-latin;
+  list-style-position: inside;
+}
+
+.answer-0:hover,
+.answer-1:hover,
+.answer-2:hover,
+.answer-3:hover {
+  cursor: pointer;
+  background-color: var(--dimmerBgColor);
+}
+
+.blink-red {
+  animation-name: blink-red;
+  animation-duration: 0.15s;
+}
+
+.blink-green {
+  animation-name: blink-green;
+  animation-duration: 0.15s;
+}
+
+.statistics-block {
+  margin: 10px;
+}
+
+.current-question,
+.correct-answers,
+.wrong-answers,
+.game-info {
+  text-align: center;
+}
+
+@keyframes blink-red {
+  5% {
+    background-color: var(--auxiliaryColor2);
+  }
+}
+
+@keyframes blink-green {
+  5% {
+    background-color: var(--auxiliaryColor1);
+  }
 }
