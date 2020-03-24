@@ -15,20 +15,26 @@ body {
   background-color: var(--bgColor);
 }
 
+.app {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .quiz {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   border: 1px solid var(--auxiliaryColor1);
+  padding: 40px 60px;
+  margin: 25px auto;
   width: 15rem;
   height: 17rem;
-  padding: 20px;
-  margin: 20px auto;
 }
 
 .title,
 .question {
   text-align: center;
+  margin-bottom: 5px;
 }
 
 .answer-list {
@@ -75,4 +81,35 @@ body {
   5% {
     background-color: var(--auxiliaryColor1);
   }
+}
+
+.quiz-maker {
+  border: 1px solid var(--auxiliaryColor1);
+  padding: 25px;
+  margin: 25px;
+}
+
+.new-question-btn,
+.reset-btn {
+  display: block;
+  margin: 10px auto;
+  background-color: var(--bgColor);
+  border: 1px solid var(--auxiliaryColor1);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.new-question-btn:hover,
+.reset-btn:hover {
+  background-color: var(--auxiliaryColor1);
+  color: var(--bgColor);
+  text-shadow: 1px 1px 2px #000000;
+}
+
+.quiz-maker-info {
+  text-align: center;
+}
+
+.new-quiz-table {
+  width: 100%;
 }

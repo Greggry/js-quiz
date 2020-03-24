@@ -1,6 +1,57 @@
-let quiz = document.createElement('div'); // main node
+// main node
+let app = document.createElement('div');
+app.className = 'app';
+document.body.appendChild(app);
+
+// quiz maker div and contents
+let quizMaker = document.createElement('div');
+quizMaker.className = 'quiz-maker';
+app.appendChild(quizMaker);
+
+let quizMakerInfo = document.createElement('h3');
+quizMakerInfo.className = 'quiz-maker-info';
+quizMakerInfo.textContent = 'Quiz Maker'
+quizMaker.appendChild(quizMakerInfo);
+
+let newQuizTable = document.createElement('table');
+newQuizTable.className = 'new-quiz-table';
+quizMaker.appendChild(newQuizTable);
+
+let newQuizTableHeaders = document.createElement('tr');
+newQuizTable.appendChild(newQuizTableHeaders);
+
+let tableHeaderContent = new Array(6); // question, a, b, c, d, correct. example: '2+2=', 3, 4, 5, 6, 4
+/* tableHeaderContent[0] = question
+ * tableHeaderContent[1] = answer a
+ * tableHeaderContent[2] = answer b
+ * tableHeaderContent[3] = answer c
+ * tableHeaderContent[4] = answer d
+ * tableHeaderContent[5] = correct answer
+ */
+tableHeaderContent[0] = document.createElement('th');
+tableHeaderContent[0].textContent = 'question';
+newQuizTableHeaders.appendChild(tableHeaderContent[0]);
+
+for (let i = 1; i <= 4; i++) {
+  tableHeaderContent[i] = document.createElement('th');
+  tableHeaderContent[i].textContent = "answer " + i; // answer 1, answer 2, answer 3, answer 4
+  newQuizTableHeaders.appendChild(tableHeaderContent[i]);
+}
+
+tableHeaderContent[5] = document.createElement('th');
+tableHeaderContent[5].textContent = 'correct';
+newQuizTableHeaders.appendChild(tableHeaderContent[5]);
+
+
+let newQuestionBtn = document.createElement('button');
+newQuestionBtn.className = 'new-question-btn';
+newQuestionBtn.textContent = 'Add a question';
+quizMaker.appendChild(newQuestionBtn);
+
+// quiz div and contents
+let quiz = document.createElement('div');
 quiz.className = 'quiz';
-document.body.appendChild(quiz);
+app.appendChild(quiz);
 
 
 let title = document.createElement('h3');
@@ -58,9 +109,14 @@ gameInfo.className = 'game-info';
 quiz.appendChild(gameInfo);
 gameInfo.style.display = 'none'; // initially hidden, we show it back later
 
+let resetButton = document.createElement('button');
+resetButton.className = 'reset-btn';
+resetButton.textContent = 'Reset';
+// we don't append; we could append it later, to anything
+
 // dummy quiz. format: question, a, b, c, d, correct
 // note that the correct answer is always at quiz[n][5]
-let quizContent = new Array([
+let quizArray = new Array([
   'What is 2+2?',
   '3', '4', '5', '6',
   '4'
@@ -77,13 +133,13 @@ let quizContent = new Array([
 // quiz setup
 let correctAnswersStat = 0;
 let currentQuestionStat = 0; // count from 0 to n-1st question
-let wrongQuestionStat = 0; // technically it's equal to curentQuestionStat - correctAnswersStat, if we give one shot for each question
-displayQuestion(quizContent[currentQuestionStat]) // prints the first question
+let wrongAnswerStat = 0; // technically it's equal to curentQuestionStat - correctAnswersStat, if we give one shot for each question
+displayQuestion(quizArray[currentQuestionStat]) // prints the first question
 updateStatistics(); // shows statistics
 
 function updateStatistics() {
   correctAnswers.textContent = 'Correct: ' + correctAnswersStat;
-  wrongAnswers.textContent = 'Wrong: ' + wrongQuestionStat;
+  wrongAnswers.textContent = 'Wrong: ' + wrongAnswerStat;
   currentQuestion.textContent = 'Question: ' + currentQuestionStat;
 }
 
@@ -122,30 +178,53 @@ function toggleGameInfo() {
   }
 }
 
-// how the game works
+function applyQuizAndReset(event) {
+  // set newQuiz as the quiz currently happening
+  quizArray = event.currentTarget.newQuizArray;
+  // reset stats
+  currentQuestionStat = 0;
+  correctAnswersStat = 0;
+  wrongAnswerStat = 0;
+
+  displayQuestion(quizArray[currentQuestionStat]) // prints the first question
+  blink('green');
+  toggleQuestionsBlock(); // shows the answers
+  toggleGameInfo(); // hides gameInfo
+  updateStatistics(); // shows reset statistics
+}
+
+// how the quiz works
 for (let i = 0; i < 4; i++) {
   answer[i].addEventListener('click', (event) => {
-    if (event.target.textContent == quizContent[currentQuestionStat][5]) {
+    if (event.target.textContent == quizArray[currentQuestionStat][5]) {
       correctAnswersStat++;
       currentQuestionStat++;
 
-      if (currentQuestionStat >= quizContent.length) {
+      if (currentQuestionStat >= quizArray.length) {
         blink('green');
         toggleQuestionsBlock(); // hides the answers
         toggleGameInfo(); // shows gameInfo
         gameInfo.textContent = 'You won, congatulations!';
+        gameInfo.appendChild(resetButton);
+
+
         updateStatistics();
         return 0;
       }
 
       blink('green');
-      displayQuestion(quizContent[currentQuestionStat]);
+      displayQuestion(quizArray[currentQuestionStat]);
       updateStatistics();
 
     } else {
       blink('red');
-      wrongQuestionStat++;
+      wrongAnswerStat++;
       updateStatistics();
     }
   });
 }
+
+resetButton.newQuizArray = quizArray; // this property is later invoked by event.currentTarget.newQuizArray (in a function)
+resetButton.addEventListener('click', applyQuizAndReset); // reset quiz and start over when clicked
+
+// quiz maker
