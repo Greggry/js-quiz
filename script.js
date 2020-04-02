@@ -1,67 +1,40 @@
-// quiz div and contents
-let quiz = document.createElement('div');
-quiz.className = 'quiz';
-document.body.appendChild(quiz);
+// new html element
+function addToDOM(HTMLTag, classAttribute, parentElement, textInside = '') {
+  const newElement = document.createElement(HTMLTag);
+  newElement.className = classAttribute;
+  newElement.textContent = textInside;
 
-let title = document.createElement('h3');
-title.className = 'title';
-title.textContent = 'quiz';
-quiz.appendChild(title);
+  if (parentElement != null) { // if we chose to append
+    parentElement.appendChild(newElement);
+  };
 
-
-let questionBlock = document.createElement('div');
-questionBlock.className = 'question-block';
-quiz.appendChild(questionBlock);
-
-let question = document.createElement('h5');
-question.className = 'question';
-question.textContent = 'dummy question?';
-questionBlock.appendChild(question);
-
-
-let answerBlock = document.createElement('div');
-answerBlock.className = 'answer-block';
-questionBlock.appendChild(answerBlock);
-
-let answerList = document.createElement('ol');
-answerList.className = 'answer-list';
-answerBlock.appendChild(answerList);
-
-let answer = new Array(4);
-for (let i = 0; i < 4; i++) {
-  answer[i] = document.createElement('li');
-  answer[i].className = 'answer-' + i; // .answer-0, .answer-1, .answer-2, .answer-3
-  answer[i].textContent = 'answer ' + i;
-  answerList.appendChild(answer[i]);
+  return newElement;
 }
 
+// quiz div and contents
+const quiz = addToDOM('div', 'quiz', document.body); // main node
 
-let statisticsBlock = document.createElement('div');
-statisticsBlock.className = 'statistics-block';
-quiz.appendChild(statisticsBlock);
+const title = addToDOM('h3', 'title', quiz, 'quiz');
+const questionBlock = addToDOM('div', 'question-block', quiz);
+const question = addToDOM('h5', 'question', questionBlock, 'dummy-question');
+const answerBlock = addToDOM('div', 'answer-block', questionBlock);
+const answerList = addToDOM('ol', 'answer-list', answerBlock);
 
-let currentQuestion = document.createElement('div');
-currentQuestion.className = 'current-question';
-statisticsBlock.appendChild(currentQuestion);
+const answer = new Array(4);
+for (let i = 0; i < 4; i++) {
+  // .answer-0, .answer-1, .answer-2, .answer-3
+  answer[i] = addToDOM('li', 'answer-' + i, answerList, 'answer' + i);
+}
 
-let correctAnswers = document.createElement('div');
-correctAnswers.className = 'correct-answers';
-statisticsBlock.appendChild(correctAnswers);
+const statisticsBlock = addToDOM('div', 'statistics-block', quiz);
+const currentQuestion = addToDOM('div', 'current-question', statisticsBlock);
+const correctAnswers = addToDOM('div', 'correct-answers', statisticsBlock);
+const wrongAnswers = addToDOM('div', 'wrong-answers', statisticsBlock);
+const gameInfo = addToDOM('div', 'game-info', quiz);
+gameInfo.style.display = 'none'; // initially hidden, we'll show it back later
 
-let wrongAnswers = document.createElement('div');
-wrongAnswers.className = 'wrong-answers';
-statisticsBlock.appendChild(wrongAnswers);
-
-
-let gameInfo = document.createElement('div');
-gameInfo.className = 'game-info';
-quiz.appendChild(gameInfo);
-gameInfo.style.display = 'none'; // initially hidden, we show it back later
-
-let resetButton = document.createElement('button');
-resetButton.className = 'reset-btn';
-resetButton.textContent = 'Reset';
-// we don't append; we could append it later, to anything
+const resetButton = addToDOM('button', 'reset-btn', null, 'Reset');
+// we don't append the resetButton; we could append it later, to anything
 
 // dummy quiz. format: question, a, b, c, d, correct
 // note that the correct answer is always at quiz[n][5]
@@ -77,6 +50,10 @@ let quizArray = new Array([
   'What is 2^5+4?',
   '12', '20', '36', '68',
   '36'
+], [
+  'What is the square root of 16?',
+  '2', '4', '8', '16',
+  '4'
 ]);
 
 // quiz setup
@@ -110,49 +87,55 @@ function blink(color) {
   }, 150); // removes the class after 0.15 seconds
 }
 
-function toggleQuestionsBlock() {
-  if (questionBlock.style.display == 'initial' || questionBlock.style.display == '') {
-    questionBlock.style.display = 'none'; // if shown, hide it
-  } else {
-    questionBlock.style.display = 'initial'; // shows it back
-  }
-}
-
-function toggleGameInfo() {
-  if (gameInfo.style.display == 'initial' || gameInfo.style.display == '') {
-    gameInfo.style.display = 'none'; // if shown, hide it
-  } else {
-    gameInfo.style.display = 'initial'; // shows it back
+function toggleElement(element, whatState = 'opposite') {
+  switch (whatState) {
+    case 'none':
+      element.style.display = 'none';
+      break;
+    case 'block':
+      element.style.display = 'block';
+      break;
+    case 'initial':
+      element.style.display = 'initial';
+      break;
+    case 'opposite':
+      if (element.style.display == 'block' || element.style.display == '') {
+        element.style.display = 'none'; // if shown, hide it
+      } else {
+        element.style.display = 'block'; // shows it back
+      }
+      break;
+    default:
+      console.log('toggleElement() error');
   }
 }
 
 // how the quiz works
 for (let i = 0; i < 4; i++) {
   answer[i].addEventListener('click', (event) => {
-    if (event.target.textContent == quizArray[currentQuestionStat][5]) {
+    if (event.target.textContent == quizArray[currentQuestionStat][5]) { // correct, quizArray[x][5] is the correct answer to question number x
       correctAnswersStat++;
       currentQuestionStat++;
 
       if (currentQuestionStat >= quizArray.length) { // ran out of questions
         blink('green');
-        toggleQuestionsBlock(); // hides the answers
-        toggleGameInfo(); // shows gameInfo
+        toggleElement(questionBlock, 'none'); // hides question and answers
+        toggleElement(gameInfo, 'block'); // shows gameInfo
         gameInfo.textContent = 'You won, congatulations!';
         gameInfo.appendChild(resetButton);
 
-        updateStatistics();
+        updateStatistics(); // updates the statistics block for the last time
         return 0;
       }
 
       blink('green');
       displayQuestion(quizArray[currentQuestionStat]);
-      updateStatistics();
-
-    } else {
+    } else { // wrong answer
       blink('red');
       wrongAnswerStat++;
-      updateStatistics();
     }
+
+    updateStatistics();
   });
 }
 
@@ -165,7 +148,7 @@ resetButton.addEventListener('click', () => {
 
   displayQuestion(quizArray[currentQuestionStat]) // prints the first question
   blink('green');
-  toggleQuestionsBlock(); // shows the answers
-  toggleGameInfo(); // hides gameInfo
+  toggleElement(questionBlock, 'block'); // shows the answers
+  toggleElement(gameInfo, 'none'); // hides gameInfo
   updateStatistics(); // shows reset statistics
 });
