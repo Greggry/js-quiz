@@ -90,7 +90,8 @@ body {
 }
 
 .new-question-btn,
-.reset-btn {
+.reset-btn,
+.apply-new-quiz-btn {
   display: block;
   margin: 10px auto;
   background-color: var(--bgColor);
@@ -112,4 +113,10 @@ body {
 
 .new-quiz-table {
   width: 100%;
+  border: 1px solid gray;
+}
+
+.table-data-input {
+  width: 80%;
+  padding: 0;
 }

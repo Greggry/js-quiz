@@ -48,6 +48,11 @@ newQuestionBtn.className = 'new-question-btn';
 newQuestionBtn.textContent = 'Add a question';
 quizMaker.appendChild(newQuestionBtn);
 
+let applyNewQuizBtn = document.createElement('button');
+applyNewQuizBtn.className = 'apply-new-quiz-btn';
+applyNewQuizBtn.textContent = 'Apply';
+quizMaker.appendChild(applyNewQuizBtn);
+
 // quiz div and contents
 let quiz = document.createElement('div');
 quiz.className = 'quiz';
@@ -188,8 +193,8 @@ function applyQuizAndReset(event) {
 
   displayQuestion(quizArray[currentQuestionStat]) // prints the first question
   blink('green');
-  toggleQuestionsBlock(); // shows the answers
-  toggleGameInfo(); // hides gameInfo
+  questionBlock.style.display = 'initial'; // shows the answers
+  gameInfo.style.display = 'none'; // hides gameInfo
   updateStatistics(); // shows reset statistics
 }
 
@@ -200,7 +205,7 @@ for (let i = 0; i < 4; i++) {
       correctAnswersStat++;
       currentQuestionStat++;
 
-      if (currentQuestionStat >= quizArray.length) {
+      if (currentQuestionStat >= quizArray.length) { // it was the last question
         blink('green');
         toggleQuestionsBlock(); // hides the answers
         toggleGameInfo(); // shows gameInfo
@@ -227,4 +232,56 @@ for (let i = 0; i < 4; i++) {
 resetButton.newQuizArray = quizArray; // this property is later invoked by event.currentTarget.newQuizArray (in a function)
 resetButton.addEventListener('click', applyQuizAndReset); // reset quiz and start over when clicked
 
-// quiz maker
+// quiz maker logic
+let questionArray = new Array(); // array to be later swapped for quizArray
+
+function displayQuestionList() {
+  // clear table rows containing data
+  let oldTableDataElements = document.querySelectorAll('.table-row-data');
+  for (let i = 0; i < oldTableDataElements.length; i++) {
+    oldTableDataElements[i].parentNode.removeChild(oldTableDataElements[i]);
+  }
+
+  // insert elements. for each table
+  for (let i = 0; i < questionArray.length; i++) {
+
+    let newTableRow = document.createElement('tr');
+    newTableRow.className = 'table-row-data'; // .table-row-data .row-0, .table-row-data .row-1 ...
+
+    // for each table column
+    for (let j = 0; j < 6; j++) {
+      let tableData = document.createElement('td'); // table data
+      newTableRow.appendChild(tableData);
+
+      let tableDataInput = document.createElement('input');
+      if (questionArray[i][j] != undefined) {
+        tableDataInput.value = questionArray[i][j];
+      }
+      tableDataInput.className = 'table-data-input';
+
+      // html attributes set to row=i, column=j
+      tableDataInput.setAttribute('row', i);
+      tableDataInput.setAttribute('column', j);
+
+      tableDataInput.addEventListener('keyup', (event) => {
+        // save data to questionArray
+        let row = event.currentTarget.getAttribute('row');
+        let column = event.currentTarget.getAttribute('column');
+
+        questionArray[row][column] = event.currentTarget.value;
+      });
+
+      tableData.appendChild(tableDataInput);
+    }
+
+    newQuizTable.appendChild(newTableRow);
+  }
+}
+
+newQuestionBtn.addEventListener('click', () => {
+  questionArray.push(new Array(6)); // new empty array in the correct format
+  displayQuestionList();
+});
+
+applyNewQuizBtn.newQuizArray = questionArray;
+applyNewQuizBtn.addEventListener('click', applyQuizAndReset);
