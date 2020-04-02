@@ -15,11 +15,6 @@ body {
   background-color: var(--bgColor);
 }
 
-.app {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-}
-
 .quiz {
   display: flex;
   flex-direction: column;
@@ -83,13 +78,6 @@ body {
   }
 }
 
-.quiz-maker {
-  border: 1px solid var(--auxiliaryColor1);
-  padding: 25px;
-  margin: 25px;
-}
-
-.new-question-btn,
 .reset-btn {
   display: block;
   margin: 10px auto;
@@ -99,17 +87,8 @@ body {
   padding: 10px;
 }
 
-.new-question-btn:hover,
 .reset-btn:hover {
   background-color: var(--auxiliaryColor1);
   color: var(--bgColor);
   text-shadow: 1px 1px 2px #000000;
-}
-
-.quiz-maker-info {
-  text-align: center;
-}
-
-.new-quiz-table {
-  width: 100%;
 }

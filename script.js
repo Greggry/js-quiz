@@ -1,58 +1,7 @@
-// main node
-let app = document.createElement('div');
-app.className = 'app';
-document.body.appendChild(app);
-
-// quiz maker div and contents
-let quizMaker = document.createElement('div');
-quizMaker.className = 'quiz-maker';
-app.appendChild(quizMaker);
-
-let quizMakerInfo = document.createElement('h3');
-quizMakerInfo.className = 'quiz-maker-info';
-quizMakerInfo.textContent = 'Quiz Maker'
-quizMaker.appendChild(quizMakerInfo);
-
-let newQuizTable = document.createElement('table');
-newQuizTable.className = 'new-quiz-table';
-quizMaker.appendChild(newQuizTable);
-
-let newQuizTableHeaders = document.createElement('tr');
-newQuizTable.appendChild(newQuizTableHeaders);
-
-let tableHeaderContent = new Array(6); // question, a, b, c, d, correct. example: '2+2=', 3, 4, 5, 6, 4
-/* tableHeaderContent[0] = question
- * tableHeaderContent[1] = answer a
- * tableHeaderContent[2] = answer b
- * tableHeaderContent[3] = answer c
- * tableHeaderContent[4] = answer d
- * tableHeaderContent[5] = correct answer
- */
-tableHeaderContent[0] = document.createElement('th');
-tableHeaderContent[0].textContent = 'question';
-newQuizTableHeaders.appendChild(tableHeaderContent[0]);
-
-for (let i = 1; i <= 4; i++) {
-  tableHeaderContent[i] = document.createElement('th');
-  tableHeaderContent[i].textContent = "answer " + i; // answer 1, answer 2, answer 3, answer 4
-  newQuizTableHeaders.appendChild(tableHeaderContent[i]);
-}
-
-tableHeaderContent[5] = document.createElement('th');
-tableHeaderContent[5].textContent = 'correct';
-newQuizTableHeaders.appendChild(tableHeaderContent[5]);
-
-
-let newQuestionBtn = document.createElement('button');
-newQuestionBtn.className = 'new-question-btn';
-newQuestionBtn.textContent = 'Add a question';
-quizMaker.appendChild(newQuestionBtn);
-
 // quiz div and contents
 let quiz = document.createElement('div');
 quiz.className = 'quiz';
-app.appendChild(quiz);
-
+document.body.appendChild(quiz);
 
 let title = document.createElement('h3');
 title.className = 'title';
@@ -159,7 +108,6 @@ function blink(color) {
   setTimeout(() => {
     quiz.classList.remove(colorClass);
   }, 150); // removes the class after 0.15 seconds
-
 }
 
 function toggleQuestionsBlock() {
@@ -178,21 +126,6 @@ function toggleGameInfo() {
   }
 }
 
-function applyQuizAndReset(event) {
-  // set newQuiz as the quiz currently happening
-  quizArray = event.currentTarget.newQuizArray;
-  // reset stats
-  currentQuestionStat = 0;
-  correctAnswersStat = 0;
-  wrongAnswerStat = 0;
-
-  displayQuestion(quizArray[currentQuestionStat]) // prints the first question
-  blink('green');
-  toggleQuestionsBlock(); // shows the answers
-  toggleGameInfo(); // hides gameInfo
-  updateStatistics(); // shows reset statistics
-}
-
 // how the quiz works
 for (let i = 0; i < 4; i++) {
   answer[i].addEventListener('click', (event) => {
@@ -200,13 +133,12 @@ for (let i = 0; i < 4; i++) {
       correctAnswersStat++;
       currentQuestionStat++;
 
-      if (currentQuestionStat >= quizArray.length) {
+      if (currentQuestionStat >= quizArray.length) { // ran out of questions
         blink('green');
         toggleQuestionsBlock(); // hides the answers
         toggleGameInfo(); // shows gameInfo
         gameInfo.textContent = 'You won, congatulations!';
         gameInfo.appendChild(resetButton);
-
 
         updateStatistics();
         return 0;
@@ -224,7 +156,16 @@ for (let i = 0; i < 4; i++) {
   });
 }
 
-resetButton.newQuizArray = quizArray; // this property is later invoked by event.currentTarget.newQuizArray (in a function)
-resetButton.addEventListener('click', applyQuizAndReset); // reset quiz and start over when clicked
+// reset quiz and start over when clicked
+resetButton.addEventListener('click', () => {
+  // reset stats
+  currentQuestionStat = 0;
+  correctAnswersStat = 0;
+  wrongAnswerStat = 0;
 
-// quiz maker
+  displayQuestion(quizArray[currentQuestionStat]) // prints the first question
+  blink('green');
+  toggleQuestionsBlock(); // shows the answers
+  toggleGameInfo(); // hides gameInfo
+  updateStatistics(); // shows reset statistics
+});
